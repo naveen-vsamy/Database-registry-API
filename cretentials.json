@@ -1,0 +1,7 @@
+{
+    "db_password": "studies123",
+    "admin_password": "password",
+    "db_name": "registry",
+    "db_host": "localhost",
+    "db_user": "root"
+}

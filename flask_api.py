@@ -1,13 +1,26 @@
 from flask import Flask, jsonify, request
 import mysql.connector
+import json
 
 app = Flask(__name__)
 
-'''
 @app.route("/")
 def home():
     return ("Hello")
-'''
+
+# loading the file with db cretentials and app admin cretentials.
+# it is always better to keep the cretential files out of python code.
+file = open("cretentials.json")
+cretentials = json.load(file)
+
+mydb = mysql.connector.connect(
+    host = cretentials["db_host"],
+    user =cretentials["db_user"],
+    password = cretentials['db_password'],
+    database = cretentials['db_name']
+)
+cursor = mydb.cursor()
+
 
 @app.route("/register", methods = ['POST'])
 def applicant():
@@ -15,14 +28,6 @@ def applicant():
     name = data['name']
     phone = data['phone']
     
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user ="root",
-        password = "studies123",
-        database = 'registry'
-    )
-    cursor = mydb.cursor()
-
     sql = "INSERT INTO client_registry VALUES (last_insert_id(), %s, %s)"
     value = (name, phone)
     cursor.execute(sql,value)
@@ -33,17 +38,9 @@ def applicant():
 @app.route("/admin", methods = ["POST"])
 def admin():
     data = request.get_json()
-    password = "password"
+    password = cretentials['admin_password']
 
     if data['password'] == password:
-        
-       mydb = mysql.connector.connect(
-       host = "localhost",
-       user ="root",
-       password = "studies123",
-       database = 'registry'
-       )   
-       cursor = mydb.cursor()
 
        given_data = []
        for i in data:
@@ -75,9 +72,9 @@ def admin():
             sql = "SELECT * FROM client_registry WHERE `phone` = "+"'" + str(phone)+ "'"
             cursor.execute(sql)
             results =cursor.fetchall()
-            
+            message = []
             for x in results:
-                message = x
+                message.append(x)
             return jsonify({"message" : message})
        
        elif 'reg_no' in given_data:
