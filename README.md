@@ -3,3 +3,4 @@ It uses POST method to post data for registering and retriving. In this project 
 API takes JSON file as input. 
 Application is tested using postman. Works fine without any error and with right output.
 Database is created outside of this python code.
+Cretentials are stored in a seperate json file in the root directory for security.
